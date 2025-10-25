@@ -1,0 +1,1 @@
+jadi untuk kelompok kita rencananya adalah membuat dua game, dimana nanti jika pertama kali dibuka akan memperlihatkan suatu hub yang bisa dipilih antara dua game, yaitu pingpong dan game tembak - tembakan pesawat.
