@@ -10,9 +10,23 @@
             display: block;
             margin: auto; 
         }
+        .skor {
+            font-size: 50px;
+            font-weight: bold;
+        }
+        #skorKiri {
+            margin-left: 150px;
+        }
+        #skorKanan {
+            margin-right: 150px;
+        }
     </style>
 </head>
 <body>
     <canvas id="canva1" width="900" height="600"></canvas>
+    <div style="display: flex; justify-content: space-between; width: 800px; margin: auto;">
+        <div id="skorKiri" class="skor">0</div>
+        <div id="skorKanan" class="skor">0</div>
+    </div>
     <script src ="bola.js"></script>
 </html>
