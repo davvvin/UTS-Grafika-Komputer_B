@@ -15,6 +15,10 @@ const playerModel = [
 let bullets = [];
 const bulletSpeed = 5;
 
+// musuhan nih
+let enemies = [];
+const enemySpawnRate = 0.01; // kemungkinan untuk munculnya musuh (Increased for testing)
+
 
 // pergerakan peswat
 cnv.addEventListener('mousemove', (e) => {
@@ -45,6 +49,7 @@ function gameLoop() {
         playerPoints.push({ x: newX, y: newY });
     }
 
+    // our ship
     lingkaran_polar(imageData, mouseX-15*3, mouseY-15, 15, 0, 0, 255);
     lingkaran_polar(imageData, mouseX-15, mouseY, 15, 255, 0, 0);
     lingkaran_polar(imageData, mouseX, mouseY, 30, 0, 0, 255);
@@ -63,8 +68,21 @@ function gameLoop() {
         } else {
             lingkaran_polar(imageData, bullet.x, bullet.y, 4, 255, 255, 0); 
         }
+
     }
-    
+
+    // spawn musuh (ke dalam array jadi belum digambar)
+    if (Math.random() < enemySpawnRate) {
+        enemies.push({
+            x: Math.random() * cnv.width, // letak spawn musuh secara horizontal 
+            y: -20, // letak spawn musuh (di atas canvas)
+            radius:20, // besar musuh
+            speedY: 0.5,// kecepatan musuh bergerak kebawah
+            speedX: 0.5 + Math.random(), // kecepatan musuh bergerak kesamping
+            directionChangeTimer: 60 // timer untuk musuh ganti arah (kiri/kanan)
+        });
+    }
+
     ctx.putImageData(imageData, 0, 0);
 
     requestAnimationFrame(gameLoop);
