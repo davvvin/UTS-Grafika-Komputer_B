@@ -81,7 +81,33 @@ function gameLoop() {
             speedX: 0.5 + Math.random(), // kecepatan musuh bergerak kesamping
             directionChangeTimer: 60 // timer untuk musuh ganti arah (kiri/kanan)
         });
-    }
+    }   
+
+    // spawn musuh (gambar + gerak dkk)
+    for (let i = enemies.length - 1; i >= 0; i--) {
+        let enemy = enemies[i];
+
+        // pergerakan horizontal dan vertikal
+        enemy.y += enemy.speedY;
+        enemy.x += enemy.speedX; 
+
+        // kedut kedut
+        enemy.directionChangeTimer--;
+        if (enemy.directionChangeTimer <= 0) {
+            // saat berganti arah, acak kecepatan pergerakan kiri kanan
+            enemy.speedX = (Math.random() * 2 - 1) * 2;
+            // ulang timer untuk ganti arah
+            enemy.directionChangeTimer = Math.random() * 60 + 60; // 1-2 seconds
+        }
+
+        // jika musuh mengenai tepi canvas, balik arah
+        if (enemy.x - enemy.radius < 0 || enemy.x + enemy.radius > cnv.width) {
+            enemy.speedX *= -1; // balik arah
+        }
+
+        lingkaran_polar(imageData, enemy.x, enemy.y, enemy.radius, 0, 255, 0); // gambar musuh
+
+    }
 
     ctx.putImageData(imageData, 0, 0);
 
