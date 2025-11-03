@@ -60,7 +60,6 @@ function gameLoop() {
     for (let i = bullets.length - 1; i >= 0; i--) {
         let bullet = bullets[i];
 
-        
         bullet.y -= bulletSpeed;
 
         if (bullet.y < 0) {
@@ -105,9 +104,23 @@ function gameLoop() {
             enemy.speedX *= -1; // balik arah
         }
 
-        lingkaran_polar(imageData, enemy.x, enemy.y, enemy.radius, 0, 255, 0); // gambar musuh
+        lingkaran_polar(imageData, enemy.x, enemy.y, enemy.radius, 255, 0, 255); 
+
+        for (var j = bullets.length - 1; j >= 0; j--) {
+            var bullet = bullets[j];
+            var dx = enemy.x - bullet.x;
+            var dy = enemy.y - bullet.y;
+            var distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < enemy.radius + 4) {
+                enemies.splice(i, 1);
+                bullets.splice(j, 1);
+                break;
+            }
+        }
 
     }
+
+    
 
     ctx.putImageData(imageData, 0, 0);
 
