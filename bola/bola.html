@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,25 +9,32 @@
         #canva1 {
             border: 3px black solid;
             display: block;
-            margin: auto; 
+            margin: auto;
         }
+
         .skor {
             font-size: 50px;
             font-weight: bold;
         }
+
         #skorKiri {
             margin-left: 150px;
         }
+
         #skorKanan {
             margin-right: 150px;
         }
     </style>
 </head>
+
 <body>
     <canvas id="canva1" width="900" height="600"></canvas>
     <div style="display: flex; justify-content: space-between; width: 800px; margin: auto;">
         <div id="skorKiri" class="skor">0</div>
         <div id="skorKanan" class="skor">0</div>
     </div>
-    <script src ="bola.js"></script>
+    <script src="lib/bolaLib.js"></script>
+    <script src="lib/powerLib.js"></script>
+    <script src="bola.js"></script>
+
 </html>
