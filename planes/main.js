@@ -11,9 +11,13 @@ const playerModel = [
     { x: 15, y: 15 }
 ];
 
+// model pesawat player
+const playerRadius = 30;
+
 // coba buat pelurunya dulu
 let bullets = [];
 const bulletSpeed = 5;
+let bulletRadius = 4;
 
 // musuhan nih
 let enemies = [];
@@ -52,7 +56,7 @@ function gameLoop() {
     // our ship
     lingkaran_polar(imageData, mouseX-15*3, mouseY-15, 15, 0, 0, 255);
     lingkaran_polar(imageData, mouseX-15, mouseY, 15, 255, 0, 0);
-    lingkaran_polar(imageData, mouseX, mouseY, 30, 0, 0, 255);
+    lingkaran_polar(imageData, mouseX, mouseY, playerRadius, 0, 0, 255);
     lingkaran_polar(imageData, mouseX+15, mouseY, 15, 255, 0, 0);
     lingkaran_polar(imageData, mouseX+15*3, mouseY-15, 15, 0, 0, 255);
 
@@ -65,7 +69,7 @@ function gameLoop() {
         if (bullet.y < 0) {
             bullets.splice(i, 1);
         } else {
-            lingkaran_polar(imageData, bullet.x, bullet.y, 4, 255, 255, 0); 
+            lingkaran_polar(imageData, bullet.x, bullet.y, bulletRadius, 255, 255, 0); 
         }
 
     }
@@ -106,18 +110,25 @@ function gameLoop() {
 
         lingkaran_polar(imageData, enemy.x, enemy.y, enemy.radius, 255, 0, 255); 
 
-        for (var j = bullets.length - 1; j >= 0; j--) {
-            var bullet = bullets[j];
-            var dx = enemy.x - bullet.x;
-            var dy = enemy.y - bullet.y;
-            var distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance < enemy.radius + 4) {
-                enemies.splice(i, 1);
-                bullets.splice(j, 1);
-                break;
+        // untuk cek tabrakan antara musuh sm pesawat kt (ide A)
+        let distP = getDistance(enemy.x, enemy.y, mouseX, mouseY);
+
+        if (distP < enemy.radius + playerRadius) {
+            enemies.splice(i, 1);
+        } else {
+            // kita hrus cek, untuk setiap musuh apakah kena peluru ato ngga
+            for (var j = bullets.length - 1; j >= 0; j--) {
+                var bullet = bullets[j];
+                var distance = getDistance(enemy.x, enemy.y, bullet.x, bullet.y);
+                if (distance < enemy.radius + bulletRadius) {
+                    enemies.splice(i, 1);
+                    bullets.splice(j, 1);
+                    break;
+                }
             }
         }
 
+        
     }
 
     
