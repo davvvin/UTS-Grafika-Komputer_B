@@ -2,6 +2,9 @@
 const cnv = document.getElementById('canvas');
 const ctx = cnv.getContext('2d');
 
+const gameOverScreen = document.getElementById('gameOverScreen');
+const nyawa = document.getElementById('nyawa');
+
 let mouseX = 0;
 let mouseY = 0;
 
@@ -23,6 +26,8 @@ let bulletRadius = 4;
 let enemies = [];
 const enemySpawnRate = 0.01; // kemungkinan untuk munculnya musuh (Increased for testing)
 
+let playerLives = 3;
+let isGameOver = false;
 
 // pergerakan peswat
 cnv.addEventListener('mousemove', (e) => {
@@ -112,9 +117,21 @@ function gameLoop() {
 
         // untuk cek tabrakan antara musuh sm pesawat kt (ide A)
         let distP = getDistance(enemy.x, enemy.y, mouseX, mouseY);
-
+    
         if (distP < enemy.radius + playerRadius) {
+            // jika tabrakan terjadi, maka nyawa player berkurang -1
+            playerLives--;
             enemies.splice(i, 1);
+            // ganti tampilan nyawa sebanyak -1
+            nyawa.innerText = 'Lives: ' + playerLives;
+
+            // setiap pengurangan nyawa terjadi, update tampilan nyawa dan selalu cek TERUS jika nyawa habis
+            // dan jika nyawa habis, tampilkan gameOverScreen
+            if (playerLives <= 0) {
+                isGameOver = true;
+                gameOverScreen.style.display = 'flex';
+            }
+
         } else {
             // kita hrus cek, untuk setiap musuh apakah kena peluru ato ngga
             for (var j = bullets.length - 1; j >= 0; j--) {
@@ -127,11 +144,7 @@ function gameLoop() {
                 }
             }
         }
-
-        
-    }
-
-    
+    }
 
     ctx.putImageData(imageData, 0, 0);
 
