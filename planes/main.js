@@ -3,7 +3,8 @@ const cnv = document.getElementById('canvas');
 const ctx = cnv.getContext('2d');
 
 const gameOverScreen = document.getElementById('gameOverScreen');
-const nyawa = document.getElementById('nyawa');
+const nyawa = document.getElementById('nyawaDisplay');
+const skor = document.getElementById('skorDisplay');
 
 let mouseX = 0;
 let mouseY = 0;
@@ -16,6 +17,10 @@ const playerModel = [
 
 // model pesawat player
 const playerRadius = 30;
+let playerLives = 3;
+let isGameOver = false;
+let playerScore = 0;
+let isGameWon = false;
 
 // coba buat pelurunya dulu
 let bullets = [];
@@ -26,8 +31,6 @@ let bulletRadius = 4;
 let enemies = [];
 const enemySpawnRate = 0.01; // kemungkinan untuk munculnya musuh (Increased for testing)
 
-let playerLives = 3;
-let isGameOver = false;
 
 // pergerakan peswat
 cnv.addEventListener('mousemove', (e) => {
@@ -45,9 +48,25 @@ cnv.addEventListener('click', (e) =>{
     bullets.push(endOfPlane);
 })
 
+function updateHUD() {
+    // ganti tampilan nyawa sebanyak -1
+    nyawa.innerText = playerLives;
+    skor.innerText = playerScore;
+    
+}
+
 function gameLoop() {
+    if (isGameOver) {
+        return; 
+    }
+
+    // update head up display-nya di sini
+    // ini teh udah termasuk hp sama skor
+    updateHUD();
+
     let imageData = ctx.createImageData(cnv.width, cnv.height);
 
+    
     let playerPoints = [];
     for (let i = 0; i < playerModel.length; i++) {
         const p = playerModel[i];
@@ -122,9 +141,6 @@ function gameLoop() {
             // jika tabrakan terjadi, maka nyawa player berkurang -1
             playerLives--;
             enemies.splice(i, 1);
-            // ganti tampilan nyawa sebanyak -1
-            nyawa.innerText = 'Lives: ' + playerLives;
-
             // setiap pengurangan nyawa terjadi, update tampilan nyawa dan selalu cek TERUS jika nyawa habis
             // dan jika nyawa habis, tampilkan gameOverScreen
             if (playerLives <= 0) {
@@ -140,9 +156,19 @@ function gameLoop() {
                 if (distance < enemy.radius + bulletRadius) {
                     enemies.splice(i, 1);
                     bullets.splice(j, 1);
+                    playerScore += 10;
                     break;
                 }
             }
+        }
+
+        if (playerScore >= 100) {
+            isGameWon = true;
+            isGameOver = true;
+            gameOverScreen.innerHTML = '<div><b>KAMU MENANG!</b></div>';
+            gameOverScreen.style.color = 'rgba(96, 63, 24 0, 0.7)';
+            gameOverScreen.style.backgroundColor = 'rgba(171, 202, 231, 0.7)'; 
+            gameOverScreen.style.display = 'flex';
         }
     }
 
