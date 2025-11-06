@@ -32,6 +32,18 @@ let isGameOver = false;
 let playerScore = 0;
 let isGameWon = false;
 
+// powerups var
+    //powerup spawn
+    let powerup = null;
+    const powerupRadius = 10;
+    let powerupSpawnTimer = 300;
+
+    // shields
+    let shieldAngle = 0;
+    const shieldRadius = 100; // jarak rotasi shield dari pesawat
+    let shieldActiveTimer = 0;
+
+
 // coba buat pelurunya dulu
 let bullets = [];
 const bulletSpeed = 5;
@@ -87,6 +99,11 @@ function gameLoop() {
 
     let imageData = ctx.createImageData(cnv.width, cnv.height);
 
+    // shield duration
+    if (shieldActiveTimer > 0) {
+        shieldActiveTimer--;
+    }
+
     // menggambar bin tang di canvas
     for(let i = 0; i < stars.length; i++) {
         var star = stars[i];
@@ -112,6 +129,22 @@ function gameLoop() {
         gambar_titik(imageData, star.x, star.y, brightness, brightness, brightness);
     }
     
+    // powerup spawn
+    powerupSpawnTimer--;
+    if (powerupSpawnTimer <= 0) {
+        if (powerup === null) {
+            powerup = {
+                x: Math.random() * cnv.width + 50,
+                y: Math.random() * cnv.height + 50,
+            };
+        }
+        powerupSpawnTimer = 600;
+    }
+
+    // menggambar powerup
+    if (powerup !== null) {
+        lingkaran_polar(imageData, powerup.x, powerup.y, powerupRadius, 0, 255, 0);
+    }
 
     // menggambar pesawat player
     let playerPoints = [];
@@ -119,6 +152,18 @@ function gameLoop() {
         playerPoints.push(translasi(playerModel[i], { x: mouseX, y: mouseY }));
     }
     polygon(imageData, playerPoints, 255, 255, 255); 
+
+    // gambar shield powerup
+    shieldAngle += 0.05;
+    let shieldX = null;
+    let shieldY = null;
+    if (shieldActiveTimer > 0) {
+        shieldX = mouseX + shieldRadius * Math.cos(shieldAngle);
+        shieldY = mouseY + shieldRadius * Math.sin(shieldAngle);
+
+        lingkaran_polar(imageData, shieldX, shieldY, 10, 255, 0, 0);
+    }
+
 
     // update dan gambar peluru
     for (let i = bullets.length - 1; i >= 0; i--) {
@@ -146,9 +191,25 @@ function gameLoop() {
         });
     }   
 
+    if (powerup !== null) {
+        let distpowerup = getDistance(mouseX, mouseY, powerup.x, powerup.y);
+        if (distpowerup < powerupRadius + playerRadius) {
+            shieldActiveTimer = 600; // durasi shield aktif (misal 10 detik)
+            powerup = null; // hilangkan powerup dari layar
+        }
+    }
+
     // spawn musuh (gambar + gerak dkk)
     for (let i = enemies.length - 1; i >= 0; i--) {
         let enemy = enemies[i];
+
+        // shield collision impacto 
+        var distShield = getDistance(enemy.x, enemy.y, shieldX, shieldY);
+        if (distShield < enemy.radius + 10) {
+            enemies.splice(i, 1);
+            playerScore += 10;
+            continue;
+        }
 
         // pergerakan horizontal dan vertikal
         enemy.y += enemy.speedY;
