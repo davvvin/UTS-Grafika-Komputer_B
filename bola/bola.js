@@ -91,8 +91,8 @@ function polar_circle2() {
     // bikin garis lingkaran tengah
     var cx = Math.floor(cnv.width / 2);
     var cy = Math.floor(cnv.height / 2);
-    dda_line(imageData, cx, 0, cx, cnv.height, 30, 30, 30);
-    lingkaranPolar(imageData, cx, cy, 60, { r: 30, g: 30, b: 30 })
+    dda_line(imageData, cx, 0, cx, cnv.height, 255, 255, 255);
+    lingkaranPolar(imageData, cx, cy, 60, { r: 255, g: 255, b: 255 })
 
     // gerak player
     if (keyW) {
@@ -129,15 +129,15 @@ function polar_circle2() {
     }
 
     // bikin kotak 
-    kotak(imageData, "kiri", kotakKiriCY, kotakTinggiKiri, kotakTebal, kotakJarakTepi, 255, 0, 0);
-    kotak(imageData, "kanan", kotakKananCY, kotakTinggiKanan, kotakTebal, kotakJarakTepi, 0, 255, 0);
+    kotak(imageData, "kiri", kotakKiriCY, kotakTinggiKiri, kotakTebal, kotakJarakTepi, 0, 255, 0);
+    kotak(imageData, "kanan", kotakKananCY, kotakTinggiKanan, kotakTebal, kotakJarakTepi, 255, 0, 0);
 
     // bikin gambar gawang
     var tinggi = 200;
     var yAwal = Math.floor((cnv.height - tinggi) / 2);
     var lebar = 80;
-    gawang(imageData, "kiri", yAwal, tinggi, lebar, 30, 30, 30);
-    gawang(imageData, "kanan", yAwal, tinggi, lebar, 30, 30, 30);
+    gawang(imageData, "kiri", yAwal, tinggi, lebar, 255, 255, 255);
+    gawang(imageData, "kanan", yAwal, tinggi, lebar, 255, 255, 255);
 
     updatePowerUp();
 
