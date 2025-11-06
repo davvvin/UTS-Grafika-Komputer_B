@@ -1,4 +1,3 @@
-
 const cnv = document.getElementById('canvas');
 const ctx = cnv.getContext('2d');
 
@@ -8,6 +7,12 @@ const skor = document.getElementById('skorDisplay');
 
 let mouseX = 0;
 let mouseY = 0;
+
+// --- TAMBAHAN BARU UNTUK STARFIELD ---
+let stars = [];
+const numStars = 100; 
+const minStarVelocity = 0.5; 
+const maxStarVelocity = 1.5; 
 
 const playerModel = [
     { x: 0, y: -15 },
@@ -25,11 +30,11 @@ let isGameWon = false;
 // coba buat pelurunya dulu
 let bullets = [];
 const bulletSpeed = 5;
-let bulletRadius = 4;
+const bulletRadius = 4;
 
 // musuhan nih
 let enemies = [];
-const enemySpawnRate = 0.01; // kemungkinan untuk munculnya musuh (Increased for testing)
+const enemySpawnRate = 0.01; // kemungkinan untuk munculnya musuh 
 
 
 // pergerakan peswat
@@ -49,35 +54,61 @@ cnv.addEventListener('click', (e) =>{
 })
 
 function updateHUD() {
-    // ganti tampilan nyawa sebanyak -1
+    // update tampilan nyawa dan skor
     nyawa.innerText = playerLives;
     skor.innerText = playerScore;
     
 }
 
+// membuat bintang-bintang
+function createStars() {
+    for(let i = 0; i < numStars; i++) {
+        stars.push({
+            x: Math.random() * cnv.width,
+            y: Math.random() * cnv.height, 
+            size: Math.random() * 1.5 + 0.5,
+            velocity: (Math.random() * (maxStarVelocity - minStarVelocity)) + minStarVelocity
+        });
+    }
+}
+
 function gameLoop() {
+    // update head up display-nya di sini
+    updateHUD();
+
     if (isGameOver) {
         return; 
     }
 
-    // update head up display-nya di sini
-    // ini teh udah termasuk hp sama skor
-    updateHUD();
-
     let imageData = ctx.createImageData(cnv.width, cnv.height);
 
-    
-    let playerPoints = [];
-    for (let i = 0; i < playerModel.length; i++) {
-        const p = playerModel[i];
-        
-        const newX = p.x + mouseX;
-        const newY = p.y + mouseY;
-        
-        playerPoints.push({ x: newX, y: newY });
-    }
+    // menggambar bin tang di canvas
+    for(let i = 0; i < stars.length; i++) {
+        var star = stars[i];
 
-    // our ship
+        var distanceMoved = {x: 0, y: star.velocity};
+        var newPost = translasi({x: star.x, y: star.y}, distanceMoved);
+
+        star.x = newPost.x;
+        star.y = newPost.y;
+
+
+        // ini klo bintangnya udah di bawah layar, bakal respawn ke atas lagi (y: 0)
+        if(star.y > cnv.height) {
+            stars[i] = {
+                x: Math.random() * cnv.width,
+                y: 0, 
+                size: Math.random() * 1.5 + 0.5,
+                velocity: (Math.random() * (maxStarVelocity - minStarVelocity)) + minStarVelocity
+            };
+        }
+
+        var brightness = 150 + (star.size * 50); 
+        gambar_titik(imageData, star.x, star.y, brightness, brightness, brightness);
+    }
+    
+
+    // hardcode pesawat
     lingkaran_polar(imageData, mouseX-15*3, mouseY-15, 15, 0, 0, 255);
     lingkaran_polar(imageData, mouseX-15, mouseY, 15, 255, 0, 0);
     lingkaran_polar(imageData, mouseX, mouseY, playerRadius, 0, 0, 255);
@@ -101,11 +132,11 @@ function gameLoop() {
     // spawn musuh (ke dalam array jadi belum digambar)
     if (Math.random() < enemySpawnRate) {
         enemies.push({
-            x: Math.random() * cnv.width, // letak spawn musuh secara horizontal 
-            y: -20, // letak spawn musuh (di atas canvas)
-            radius:20, // besar musuh
-            speedY: 0.5,// kecepatan musuh bergerak kebawah
-            speedX: 0.5 + Math.random(), // kecepatan musuh bergerak kesamping
+            x: Math.random() * cnv.width, 
+            y: -20, 
+            radius:20, 
+            speedY: 0.5,
+            speedX: 0.5 + Math.random(), 
             directionChangeTimer: 60 // timer untuk musuh ganti arah (kiri/kanan)
         });
     }   
@@ -129,16 +160,23 @@ function gameLoop() {
 
         // jika musuh mengenai tepi canvas, balik arah
         if (enemy.x - enemy.radius < 0 || enemy.x + enemy.radius > cnv.width) {
-            enemy.speedX *= -1; // balik arah
+            enemy.speedX *= -1;
         }
 
         lingkaran_polar(imageData, enemy.x, enemy.y, enemy.radius, 255, 0, 255); 
 
+        // kondisi game menang
+        if (playerScore >= 100) {
+            isGameWon = true;
+            isGameOver = true;
+            gameOverScreen.innerHTML = '<div><b>KAMU MENANG!</b></div>';
+            gameOverScreen.style.display = 'flex';
+        }
+
         // untuk cek tabrakan antara musuh sm pesawat kt (ide A)
-        let distP = getDistance(enemy.x, enemy.y, mouseX, mouseY);
+        var distP = getDistance(enemy.x, enemy.y, mouseX, mouseY);
     
         if (distP < enemy.radius + playerRadius) {
-            // jika tabrakan terjadi, maka nyawa player berkurang -1
             playerLives--;
             enemies.splice(i, 1);
             // setiap pengurangan nyawa terjadi, update tampilan nyawa dan selalu cek TERUS jika nyawa habis
@@ -162,14 +200,7 @@ function gameLoop() {
             }
         }
 
-        if (playerScore >= 100) {
-            isGameWon = true;
-            isGameOver = true;
-            gameOverScreen.innerHTML = '<div><b>KAMU MENANG!</b></div>';
-            gameOverScreen.style.color = 'rgba(96, 63, 24 0, 0.7)';
-            gameOverScreen.style.backgroundColor = 'rgba(171, 202, 231, 0.7)'; 
-            gameOverScreen.style.display = 'flex';
-        }
+        
     }
 
     ctx.putImageData(imageData, 0, 0);
@@ -177,4 +208,5 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
+createStars();
 gameLoop();
