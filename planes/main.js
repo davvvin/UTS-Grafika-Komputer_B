@@ -15,9 +15,14 @@ const minStarVelocity = 0.5;
 const maxStarVelocity = 1.5; 
 
 const playerModel = [
-    { x: 0, y: -15 },
-    { x: -15, y: 15 },
-    { x: 15, y: 15 }
+    { x: 0, y: -30 },   
+    { x: 30, y: 15 },  
+    { x: 10, y: 20 }, 
+    { x: 15, y: 30 },  
+    { x: 0, y: 25 },   
+    { x: -15, y: 30 }, 
+    { x: -10, y: 20 }, 
+    { x: -30, y: 15 }  
 ];
 
 // model pesawat player
@@ -108,12 +113,12 @@ function gameLoop() {
     }
     
 
-    // hardcode pesawat
-    lingkaran_polar(imageData, mouseX-15*3, mouseY-15, 15, 0, 0, 255);
-    lingkaran_polar(imageData, mouseX-15, mouseY, 15, 255, 0, 0);
-    lingkaran_polar(imageData, mouseX, mouseY, playerRadius, 0, 0, 255);
-    lingkaran_polar(imageData, mouseX+15, mouseY, 15, 255, 0, 0);
-    lingkaran_polar(imageData, mouseX+15*3, mouseY-15, 15, 0, 0, 255);
+    // menggambar pesawat player
+    let playerPoints = [];
+    for (let i = 0; i < playerModel.length; i++) {
+        playerPoints.push(translasi(playerModel[i], { x: mouseX, y: mouseY }));
+    }
+    polygon(imageData, playerPoints, 255, 255, 255); 
 
     // update dan gambar peluru
     for (let i = bullets.length - 1; i >= 0; i--) {

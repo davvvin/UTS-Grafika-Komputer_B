@@ -23,7 +23,7 @@ function dda_line(imageData, x1, y1, x2, y2, r, g, b) {
         } else {
             var y = y1;
             for (var x = x1; x > x2; x--) {
-                y = y - (dy / Math.abs(dx));
+                y = y + (dy / Math.abs(dx));
                 gambar_titik(imageData, x, y, r, g, b);
             }
         }
@@ -37,7 +37,7 @@ function dda_line(imageData, x1, y1, x2, y2, r, g, b) {
         } else {
             var x = x1;
             for (var y = y1; y > y2; y--) {
-                x = x - (dx / Math.abs(dy));
+                x = x + (dx / Math.abs(dy));
                 gambar_titik(imageData, x, y, r, g, b);
             }
         }
@@ -65,5 +65,20 @@ function getDistance(x1, y1, x2, y2) {
     return Math.sqrt(dx * dx + dy * dy);
 }
 
+function polygon(imageData,point_array,r,g,b){
+    for (var i=0;i<point_array.length-1;i++){
+        var x1 = point_array[i].x;
+        var y1 = point_array[i].y;
+        var x2 = point_array[i+1].x;
+        var y2 = point_array[i+1].y;
+    
+        dda_line(imageData,x1,y1,x2,y2,r,g,b);
+    }
 
+    var x1 = point_array[point_array.length-1].x;
+    var y1 = point_array[point_array.length-1].y;
+    var x2 = point_array[0].x;
+    var y2 = point_array[0].y;
+    dda_line(imageData,x1,y1,x2,y2,r,g,b);
+}
 
