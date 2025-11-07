@@ -8,7 +8,7 @@ const skor = document.getElementById('skorDisplay');
 let mouseX = 0;
 let mouseY = 0;
 
-// --- TAMBAHAN BARU UNTUK STARFIELD ---
+// starfield (latar utk canvas)
 let stars = [];
 const numStars = 100; 
 const minStarVelocity = 0.5; 
@@ -114,13 +114,12 @@ function gameLoop() {
         star.x = newPost.x;
         star.y = newPost.y;
 
-
         // ini klo bintangnya udah di bawah layar, bakal respawn ke atas lagi (y: 0)
         if(star.y > cnv.height) {
             stars[i] = {
                 x: Math.random() * cnv.width,
                 y: 0, 
-                size: Math.random() * 1.5 + 0.5,
+                size: Math.random() * 1.5 + 1.5,
                 velocity: (Math.random() * (maxStarVelocity - minStarVelocity)) + minStarVelocity
             };
         }
@@ -195,7 +194,7 @@ function gameLoop() {
         let distpowerup = getDistance(mouseX, mouseY, powerup.x, powerup.y);
         if (distpowerup < powerupRadius + playerRadius) {
             shieldActiveTimer = 600; // durasi shield aktif (misal 10 detik)
-            powerup = null; // hilangkan powerup dari layar
+            powerup = null; 
         }
     }
 
@@ -203,7 +202,7 @@ function gameLoop() {
     for (let i = enemies.length - 1; i >= 0; i--) {
         let enemy = enemies[i];
 
-        // shield collision impacto 
+        // shield collision
         var distShield = getDistance(enemy.x, enemy.y, shieldX, shieldY);
         if (distShield < enemy.radius + 10) {
             enemies.splice(i, 1);
@@ -211,7 +210,6 @@ function gameLoop() {
             continue;
         }
 
-        // pergerakan horizontal dan vertikal
         enemy.y += enemy.speedY;
         enemy.x += enemy.speedX; 
 
@@ -245,8 +243,7 @@ function gameLoop() {
         if (distP < enemy.radius + playerRadius) {
             playerLives--;
             enemies.splice(i, 1);
-            // setiap pengurangan nyawa terjadi, update tampilan nyawa dan selalu cek TERUS jika nyawa habis
-            // dan jika nyawa habis, tampilkan gameOverScreen
+        
             if (playerLives <= 0) {
                 isGameOver = true;
                 gameOverScreen.style.display = 'flex';
